@@ -1,17 +1,13 @@
 import argparse
-import types
 from scipy import spatial
 import heapq
-
-import itertools
-import numpy as np
 import operator
 
 
 def parse_args():
-    '''
+    """
         Parses the arguments.
-        '''
+    """
     parser = argparse.ArgumentParser(description="Run similarity.")
     parser.add_argument('--input', nargs='?', help="Input learned embeddings")
     parser.add_argument('--node', type=int, default=1, help='Input node id')
@@ -20,9 +16,9 @@ def parse_args():
 
 
 def read(filename):
-    '''
+    """
     Read node2vec output embeddings into a structure
-    '''
+    """
     features = {}
     with open(filename) as f:
         stat = f.readline().split(' ')

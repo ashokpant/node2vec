@@ -1,6 +1,11 @@
 import argparse
+import types
 from scipy import spatial
 import heapq
+
+import itertools
+import numpy as np
+import operator
 
 
 def parse_args():
@@ -29,20 +34,28 @@ def read(filename):
     return {'numNodes': int(stat[0]), "numFeatures": int(stat[1]), "features": features}
 
 
+def nLargest(data, topK):
+    if type(data) is list:
+        return heapq.nlargest(topK, data, key=operator.itemgetter(1))
+    elif type(data) is dict:
+        return heapq.nlargest(topK, data, key=data.get)
+
+
 def cosineSimilarity(feature, label, features, topK):
-    results = {}
+    results = []
     for key in features.keys():
         if key != label:
             result = 1 - spatial.distance.cosine(feature, features[key])
-            results[key] = result
-    sortedByValue = heapq.nlargest(topK, results, key=results.get)
-    return sortedByValue
+            results.append((key, result))
+    out = nLargest(results, topK)
+    return out
 
 
 def main(args):
     print("Similarity calculations")
     features = read(args.input)
-    print("Features: " + str(features.get('numNodes')) + " , " + str(features.get('numFeatures')))
+    print(
+        "Total nodes: " + str(features.get('numNodes')) + " , Number of features: " + str(features.get('numFeatures')))
     print str(args.topK) + " similar nodes to node " + str(args.node)
     print cosineSimilarity(features.get("features").get(args.node), args.node, features.get("features"), args.topK)
 

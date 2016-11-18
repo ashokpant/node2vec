@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from itertools import izip
 import networkx as nx
 import argparse
@@ -45,7 +47,7 @@ def main(args):
     nx.draw_networkx_labels(G, pos, labels, font_size=14)
 
     plt.axis('off')
-    plt.savefig("graph_with_labels.png")
+    #plt.savefig("graph_with_labels.png")
     plt.show()
 
 

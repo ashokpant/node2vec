@@ -14,16 +14,16 @@ def parse_args():
 
 
 def readLabels(filename):
-    appendId = True
+    appendId = False
     labels = {}
     with open(filename) as f:
         for line in f:
-            tokens = [n for n in line.strip().split(' ')]
+            tokens = [n for n in line.strip().split()]
             key = int(tokens[0])
             if appendId:
-                value = str(key) + ":" + tokens[1]
+                value = str(key) + ":" + str(tokens[2])
             else:
-                value = tokens[1]
+                value = tokens[2]
 
             labels[key] = value
     return labels
@@ -31,17 +31,18 @@ def readLabels(filename):
 
 def main(args):
     labels = {}
-    nodeSize = 1000
+    nodeSize = 100
     if args.labels is not None:
-        nodeSize = 5000
+        nodeSize = 500
         labels = readLabels(args.labels)
 
-    G = nx.read_edgelist(args.input, '#', None, None, int)
+    G = nx.read_edgelist(args.input, nodetype=int, data=(('weight',int),))
+    # G = nx.read_edgelist(args.input, '#', None, None, int)
     pos = nx.spring_layout(G)
-
     if len(labels) == 0:
         labels = dict(izip(iter(pos.keys()), iter(pos.keys())))
 
+    labels = dict((k,labels[k]) for k in pos.keys())  # retain labels that are in graph
     nx.draw_networkx_nodes(G, pos, None, nodeSize, 'g')
     nx.draw_networkx_edges(G, pos, width=3.0, alpha=0.5)
     nx.draw_networkx_labels(G, pos, labels, font_size=14)
